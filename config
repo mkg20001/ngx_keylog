@@ -1,6 +1,7 @@
 ngx_module_type=HTTP
 ngx_module_name=ngx_http_keylog
-ngx_module_srcs="$ngx_addon_dir/ngx_keylog.c $ngx_addon_dir/ngx_sslkeylog.c"
+# ngx_module_srcs="$ngx_addon_dir/ngx_keylog.c $ngx_addon_dir/ngx_sslkeylog.c"
+ngx_module_srcs="$ngx_addon_dir/ngx_keylog.c"
 
 . auto/module
 
