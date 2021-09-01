@@ -7,7 +7,7 @@
 nix-env -p mkcert --run "mkcert localhost"
 # enter shell with nginx
 nix-shell "<nixpkgs>" -A nginx
-# run those in that shell
+# run this in that shell
 unpackPhase
 cd nginx-*
 configureFlags="$configureFlags --add-module=$(readlink -f $PWD/..)"
@@ -28,7 +28,15 @@ dependencies:
 ```
 mkcert localhost
 cd nginx-VERSION
-./configure --add-module=$(readlink -f $PWD/..) --enable-stream
+./configure --add-module=$(readlink -f $PWD/..) --with-stream --with-stream_ssl-module
 make
 ./objs/nginx -c $PWD/../test.conf
 ```
+
+# clion
+
+- First do setup
+- Open project in CLion: `clion ngx_keylog` (on nixOS first run `nix-shell`, then run clion from there)
+- Help > Find Action > Create CMakeLists.txt
+- Leave everything as-is
+- CLion completion should now work (building doesn't work via clion)
