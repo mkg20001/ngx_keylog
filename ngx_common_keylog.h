@@ -24,10 +24,10 @@
 static int keylog_file_fd = -1;
 
 typedef struct {
-    ngx_str_t keylog_location;
-    ngx_flag_t keylog_enabled;
+    ngx_str_t keylog_file;
+    ngx_flag_t keylog;
     int keylog_fd;
-    ngx_str_t current_keylog_location;
+    ngx_str_t current_keylog_file;
 } ngx_keylog_conf_t;
 
 /* Key extraction via the new OpenSSL 1.1.1 API. */
@@ -53,7 +53,7 @@ ngx_common_keylog_create_main_conf(ngx_conf_t *cf)
         return NGX_CONF_ERROR;
     }
 
-    conf->keylog_enabled = NGX_CONF_UNSET;
+    conf->keylog = NGX_CONF_UNSET;
     conf->keylog_fd = -1;
 
     return conf;
@@ -64,25 +64,25 @@ ngx_common_keylog_init_main_conf(ngx_conf_t *cf, void *conf) {
     ngx_keylog_conf_t *klcf;
     klcf = conf;
 
-    if (klcf->keylog_enabled == 1) {
-        if (!klcf->keylog_location.len) {
+    if (klcf->keylog == 1) {
+        if (!klcf->keylog_file.len) {
             ngx_log_error(NGX_LOG_EMERG, cf->log, 0,
-                          "keylog enabled but no keylog_location set");
+                          "keylog enabled but no keylog_file set");
             return NGX_CONF_ERROR;
         }
 
         // setup keylogging
-        if (klcf->current_keylog_location.len != klcf->keylog_location.len || !ngx_strncmp(klcf->keylog_location.data, klcf->current_keylog_location.data, klcf->keylog_location.len)) {
+        if (klcf->current_keylog_file.len != klcf->keylog_file.len || !ngx_strncmp(klcf->keylog_file.data, klcf->current_keylog_file.data, klcf->keylog_file.len)) {
             if (klcf->keylog_fd >= 0) {
                 close(klcf->keylog_fd);
                 klcf->keylog_fd = -1;
             }
 
-            char * kl = ngx_palloc(cf->pool, klcf->keylog_location.len + 1);
+            char * kl = ngx_palloc(cf->pool, klcf->keylog_file.len + 1);
             if (kl == NULL)
                 return NGX_CONF_ERROR;
-            ngx_memcpy(kl, klcf->keylog_location.data, klcf->keylog_location.len);
-            kl[klcf->keylog_location.len] = '\0';
+            ngx_memcpy(kl, klcf->keylog_file.data, klcf->keylog_file.len);
+            kl[klcf->keylog_file.len] = '\0';
             klcf->keylog_fd = open(kl, O_WRONLY | O_APPEND | O_CREAT, 0644);
 
             if (klcf->keylog_fd >= 0 && lseek(klcf->keylog_fd, 0, SEEK_END) == 0) {
@@ -92,21 +92,21 @@ ngx_common_keylog_init_main_conf(ngx_conf_t *cf, void *conf) {
                 }
             }
 
-            klcf->current_keylog_location.len = klcf->keylog_location.len;
+            klcf->current_keylog_file.len = klcf->keylog_file.len;
         }
 
-        ngx_log_error(NGX_LOG_NOTICE, cf->log, 0,
-                      "keylog enabled, logging to %*s", klcf->keylog_location.len, klcf->keylog_location.data);
+        ngx_log_error(NGX_LOG_WARN, cf->log, 0,
+                      "keylog enabled, logging to %*s", klcf->keylog_file.len, klcf->keylog_file.data);
     } else {
         // cleanup fd and current loc
         if (klcf->keylog_fd >= 0) {
             close(klcf->keylog_fd);
             klcf->keylog_fd = -1;
         }
-        if (klcf->current_keylog_location.len) {
-            ngx_free(klcf->current_keylog_location.data);
-            klcf->current_keylog_location.len = 0;
-            klcf->current_keylog_location.data = NULL;
+        if (klcf->current_keylog_file.len) {
+            ngx_free(klcf->current_keylog_file.data);
+            klcf->current_keylog_file.len = 0;
+            klcf->current_keylog_file.data = NULL;
         }
     }
 

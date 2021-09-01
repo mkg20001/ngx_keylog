@@ -23,17 +23,17 @@
 #include "ngx_common_keylog.h"
 
 static ngx_command_t ngx_stream_keylog_commands[] = {
-        { ngx_string("keylog_location"),
+        { ngx_string("keylog_file"),
           NGX_STREAM_MAIN_CONF|NGX_CONF_1MORE,
           ngx_conf_set_str_slot,
           NGX_STREAM_MAIN_CONF_OFFSET,
           0,
           NULL },
-          { ngx_string("keylog_enabled"),
+          { ngx_string("keylog"),
             NGX_STREAM_MAIN_CONF|NGX_CONF_FLAG,
             ngx_conf_set_flag_slot,
             NGX_STREAM_MAIN_CONF_OFFSET,
-            offsetof(ngx_keylog_conf_t, keylog_enabled),
+            offsetof(ngx_keylog_conf_t, keylog),
             NULL
           }
 };

@@ -6,12 +6,12 @@ Module to log SSL Keys in the [NSS Key Log Format](https://developer.mozilla.org
 
 ```conf
 server {
-  keylog_enabled on;
+  keylog on;
   keylog_file /tmp/keylog-http.txt;
 }
 
 stream {
-  keylog_enabled on;
+  keylog on;
   keylog_file /tmp/keylog-stream.txt;
 }
 ```
