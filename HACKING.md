@@ -8,7 +8,7 @@ nix-shell "<nixpkgs>" -A nginx
 # run those in that shell
 unpackPhase
 cd nginx-*
-configureFlags="$configureFlags --add-module=$PWD/../"
+configureFlags="$configureFlags --add-module=$(readlink -f $PWD/..)"
 configurePhase
 # then for testing
 buildPhase
