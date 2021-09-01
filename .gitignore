@@ -1,2 +1,7 @@
 nginx-*
 CMake*
+cmake-build-*
+result
+.idea
+*.pem
+
